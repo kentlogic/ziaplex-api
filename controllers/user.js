@@ -83,12 +83,13 @@ const handleUserRegister = (req, res, db) => {
         mobile: mobile, 
         address: address, 
         type: type,
-        date: new Date()
+        status: 1,
+        date: new Date(),
       })
       .into("users")
       .returning("firstname")
       .then((firstname) =>
-        res.json({ code: 201, message: `Welcome ${firstname}` })
+        res.json({ code: 201, message: `Welcome ${firstname}!` })
       )
       .then(trx.commit)
       .catch(trx.rollback);
