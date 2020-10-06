@@ -82,7 +82,8 @@ const handleUserRegister = (req, res, db) => {
         lastname: lastname, 
         mobile: mobile, 
         address: address, 
-        type: type
+        type: type,
+        date: new Date()
       })
       .into("users")
       .returning("firstname")
