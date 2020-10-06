@@ -15,8 +15,6 @@ const handleUsersQuery = (req, res, db) => {
       );
 };
 
-
-
 //for login
 const handleUserLogin = (req, res, db) => {
   const { email, password } = req.body;
@@ -26,17 +24,18 @@ const handleUserLogin = (req, res, db) => {
     .where({ email })
      .then((user) => {
        if(user.length > 0) {
+         //email / username was found on DB
         if (user[0].password===password) {
+          //Email and password match 
           res.json({ code: 200, message: `Welcome back ${user[0].firstname}!` });
-
         } else {
+          //Incorrect password
           res.json({ code: 404, message: "Incorrect username or password." });
         }
-       
       } else {
-        res.json({ code: 404, message: "Incorrect username or password." });
+        //No email/username found
+        res.json({ code: 404, message: "Account does not exist." });
       }
-
     })
 
     .catch((err) =>
@@ -44,32 +43,27 @@ const handleUserLogin = (req, res, db) => {
     );
 };
 
+// delete a user - will not implement for now
+// const handleUserDelete = (req, res, db) => {
+//   const uid = req.params.uid;
+//   db.transaction((trx) => {
+//     trx
+//       .delete()
+//       .from("Users")
+//       .where({ uid })
+//       .returning("name")
+//       .then((name) =>
+//         res.json({ code: 200, message: `${name} has been deleted` })
+//       )
+//       .then(trx.commit)
+//       .catch(trx.rollback);
+//   }).catch((err) => res.status(400).json({ code: 400, message: `${err}` }));
+// };
 
-
-
-//delete a project
-const handleUserDelete = (req, res, db) => {
-  const uid = req.params.uid;
-  db.transaction((trx) => {
-    trx
-      .delete()
-      .from("Users")
-      .where({ uid })
-      .returning("name")
-      .then((name) =>
-        res.json({ code: 200, message: `${name} has been deleted` })
-      )
-      .then(trx.commit)
-      .catch(trx.rollback);
-  }).catch((err) => res.status(400).json({ code: 400, message: `${err}` }));
-};
-
-
-
-//add a users
+//add a user
 const handleUserRegister = (req, res, db) => {
   const {  email, password, firstname, middlename, lastname, mobile, address, type } = req.body;
-  console.log(`${email}, ${password}, ${firstname}, ${middlename}, ${lastname}, ${mobile}, ${address}, ${type}`);
+  //For logging
   console.log(req.body);
   if ( !email || !password || !firstname || !middlename || !lastname || !mobile || !address || !type) {
     return res.json({
@@ -93,14 +87,12 @@ const handleUserRegister = (req, res, db) => {
       .into("users")
       .returning("firstname")
       .then((firstname) =>
-        res.json({ code: 201, message: `Welcome ${firstname}!` })
+        res.json({ code: 201, message: `Welcome ${firstname}` })
       )
       .then(trx.commit)
       .catch(trx.rollback);
   }).catch((err) => res.status(400).json({ code: 400, message: `${err}` }));
 };
-
-
 
 module.exports = {
   handleUserRegister: handleUserRegister,
